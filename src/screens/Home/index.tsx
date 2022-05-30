@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusBar } from "react-native";
+import { StatusBar, FlatList } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 
 import Logo from "../../assets/logo.svg";
@@ -35,8 +35,13 @@ export const Home = () => {
         </HeaderContent>
       </Header>
 
-      <Car data={data}/>
-      <Car data={data}/>
+      <FlatList
+        data={[1, 2, 3, 4, 5, 6, 7]}
+        keyExtractor={(item) => String(item)}
+        renderItem={({ item }) => <Car data={data} />}
+        contentContainerStyle={{ padding: 16 }}
+        showsVerticalScrollIndicator={false}
+      />
     </Container>
   );
 };
