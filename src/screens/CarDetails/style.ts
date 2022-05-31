@@ -76,3 +76,12 @@ export const About = styled.Text`
   margin-top: 23px;
   line-height: 25px;
 `;
+
+export const Accessories = styled.View`
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  margin-top: 16px;
+`;
