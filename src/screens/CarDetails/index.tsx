@@ -25,7 +25,9 @@ import {
   Price,
   About,
   Accessories,
+  Footer
 } from "./style";
+import { Button } from "../../components/Button";
 
 export const CarDetails = () => {
   return (
@@ -73,7 +75,23 @@ export const CarDetails = () => {
           indultado na praça Real Maestranza de Sevilla. É um belíssimo carro
           para quem gosta de acelerar.
         </About>
+
+        <About>
+          Este é automóvel desportivo. Surgiu do lendário touro de lide
+          indultado na praça Real Maestranza de Sevilla. É um belíssimo carro
+          para quem gosta de acelerar.
+        </About>
+
+        <About>
+          Este é automóvel desportivo. Surgiu do lendário touro de lide
+          indultado na praça Real Maestranza de Sevilla. É um belíssimo carro
+          para quem gosta de acelerar.
+        </About>
       </Content>
+
+      <Footer>
+        <Button title="Clica ai"/>
+      </Footer>
     </Container>
   );
 };
