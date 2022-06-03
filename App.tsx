@@ -1,5 +1,5 @@
 import React from "react";
-import {ThemeProvider} from 'styled-components'
+import { ThemeProvider } from "styled-components";
 import {
   useFonts,
   Inter_400Regular,
@@ -14,6 +14,7 @@ import {
 import { Home } from "./src/screens/Home";
 import { CarDetails } from "./src/screens/CarDetails";
 import { Scheduling } from "./src/screens/Scheduling";
+import { SchedulingDetails } from "./src/screens/SchedulingDetails";
 
 import theme from "./src/styles/theme";
 
@@ -32,7 +33,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Scheduling />
+      <SchedulingDetails />
     </ThemeProvider>
   );
 }
