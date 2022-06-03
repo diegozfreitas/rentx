@@ -1,6 +1,7 @@
 import React from "react";
 import { StatusBar, FlatList } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
+import { useNavigation } from "@react-navigation/native";
 
 import Logo from "../../assets/logo.svg";
 
@@ -8,7 +9,13 @@ import { Container, Header, HeaderContent, TotalCars } from "./styles";
 
 import { Car } from "../../components/Car";
 
-export const Home = () => {
+export const Home = ({}) => {
+  const navigation = useNavigation();
+
+  const handleCarDetails = () => {
+    navigation.navigate("CarDetails");
+  };
+
   const data = {
     brand: "Audi",
     name: "RCCoupé",
@@ -38,7 +45,9 @@ export const Home = () => {
       <FlatList
         data={[1, 2, 3, 4, 5, 6, 7]}
         keyExtractor={(item) => String(item)}
-        renderItem={({ item }) => <Car data={data} />}
+        renderItem={({ item }) => (
+          <Car data={data} onPress={handleCarDetails} />
+        )}
         contentContainerStyle={{ padding: 16 }}
         showsVerticalScrollIndicator={false}
       />
