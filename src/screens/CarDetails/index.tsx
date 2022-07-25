@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
 import { BackButton } from "../../components/BackButton";
 import { ImageSlider } from "../../components/ImageSlider";
@@ -25,11 +26,12 @@ import {
   Price,
   About,
   Accessories,
-  Footer
+  Footer,
 } from "./style";
 import { Button } from "../../components/Button";
 
 export const CarDetails = () => {
+    const navigation = useNavigation();
   return (
     <Container>
       <Header>
@@ -90,7 +92,7 @@ export const CarDetails = () => {
       </Content>
 
       <Footer>
-        <Button title="Clica ai"/>
+        <Button title="DEFINIR PERIODO" onPress={() => navigation.navigate("Scheduling")} />
       </Footer>
     </Container>
   );
