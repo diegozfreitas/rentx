@@ -17,12 +17,15 @@ import {
 } from "./style";
 
 import { CarDto } from "../../dtos/carDtos";
+import { getAccessoryIcon } from "../../utils/getAccessoryIcon";
 
 interface Props extends TouchableOpacityProps {
   data: CarDto;
 }
 
 export const Car = ({ data, ...rest }: Props) => {
+  const MotorIcon = getAccessoryIcon(data.fuel_type)
+
   return (
     <Container {...rest}>
       <Details>
@@ -36,7 +39,7 @@ export const Car = ({ data, ...rest }: Props) => {
           </Rent>
 
           <Type>
-            <GasolineSvg />
+            <MotorIcon />
           </Type>
         </About>
       </Details>
