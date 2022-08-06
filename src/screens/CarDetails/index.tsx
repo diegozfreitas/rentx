@@ -31,15 +31,20 @@ import {
 import { Button } from "../../components/Button";
 
 export const CarDetails = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
+
+  const handleConfirmRental = () => {
+    navigation.navigate("Scheduling");
+  };
+
+  const handleBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <Container>
       <Header>
-        <BackButton
-          onPress={() => {
-            console.log("oi");
-          }}
-        />
+        <BackButton onPress={handleBack} />
       </Header>
 
       <CarImages>
@@ -92,7 +97,7 @@ export const CarDetails = () => {
       </Content>
 
       <Footer>
-        <Button title="DEFINIR PERIODO" onPress={() => navigation.navigate("Scheduling")} />
+        <Button title="DEFINIR PERIODO" onPress={handleConfirmRental} />
       </Footer>
     </Container>
   );

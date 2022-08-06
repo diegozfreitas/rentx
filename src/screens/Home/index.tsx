@@ -16,11 +16,10 @@ import { CarDto } from "../../dtos/carDtos";
 export const Home = ({}) => {
   const [cars, setCars] = useState<CarDto[]>([]);
   const [loading, setLoading] = useState(false);
-
   const navigation = useNavigation();
 
-  const handleCarDetails = () => {
-    navigation.navigate("CarDetails");
+  const handleCarDetails = (car: CarDto) => {
+    navigation.navigate("CarDetails", { car });
   };
 
   useEffect(() => {
@@ -74,7 +73,7 @@ export const Home = ({}) => {
           data={cars}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Car data={item} onPress={handleCarDetails} />
+            <Car data={item} onPress={() => handleCarDetails(item)} />
           )}
           contentContainerStyle={{ padding: 16 }}
           showsVerticalScrollIndicator={false}
