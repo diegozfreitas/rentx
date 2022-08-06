@@ -1,20 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar, FlatList } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { useNavigation } from "@react-navigation/native";
 
 import Logo from "../../assets/logo.svg";
+import { api } from "../../services/api";
 
 import { Container, Header, HeaderContent, TotalCars } from "./styles";
 
 import { Car } from "../../components/Car";
+import { Load } from "../../components/Load";
+
+import { CarDto } from "../../dtos/carDtos";
 
 export const Home = ({}) => {
+  const [cars, setCars] = useState<CarDto[]>([]);
+  const [loading, setLoading] = useState(false);
+
   const navigation = useNavigation();
 
   const handleCarDetails = () => {
     navigation.navigate("CarDetails");
   };
+
+  useEffect(() => {
+    async function featCars() {
+      setLoading(true);
+      try {
+        const { data } = await api.get("/cars");
+
+        setCars(data);
+
+        console.log(data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    featCars();
+  }, []);
 
   const data = {
     brand: "Audi",
@@ -42,15 +67,19 @@ export const Home = ({}) => {
         </HeaderContent>
       </Header>
 
-      <FlatList
-        data={[1, 2, 3, 4, 5, 6, 7]}
-        keyExtractor={(item) => String(item)}
-        renderItem={({ item }) => (
-          <Car data={data} onPress={handleCarDetails} />
-        )}
-        contentContainerStyle={{ padding: 16 }}
-        showsVerticalScrollIndicator={false}
-      />
+      {loading ? (
+        <Load />
+      ) : (
+        <FlatList
+          data={cars}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Car data={item} onPress={handleCarDetails} />
+          )}
+          contentContainerStyle={{ padding: 16 }}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </Container>
   );
 };

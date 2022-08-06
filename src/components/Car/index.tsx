@@ -16,18 +16,10 @@ import {
   CarImage,
 } from "./style";
 
-interface CarData {
-  brand: string;
-  name: string;
-  rent: {
-    period: string;
-    price: number;
-  };
-  thumbnail: string;
-}
+import { CarDto } from "../../dtos/carDtos";
 
 interface Props extends TouchableOpacityProps {
-  data: CarData;
+  data: CarDto;
 }
 
 export const Car = ({ data, ...rest }: Props) => {
