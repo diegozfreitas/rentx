@@ -29,8 +29,6 @@ export const Home = ({}) => {
         const { data } = await api.get("/cars");
 
         setCars(data);
-
-        console.log(data);
       } catch (err) {
         console.log(err);
       } finally {
