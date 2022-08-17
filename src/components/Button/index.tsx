@@ -1,5 +1,6 @@
 import React from "react";
-import { TouchableOpacityProps } from "react-native";
+import { TouchableOpacityProps, ActivityIndicator } from "react-native";
+import { useTheme } from "styled-components";
 
 import { Container, Title } from "./style";
 
@@ -7,17 +8,29 @@ interface Props extends TouchableOpacityProps {
   title: string;
   color?: string;
   disabled?: boolean;
+  loading?: boolean;
 }
 
-export const Button = ({ title, color, disabled = false, ...rest }: Props) => {
+export const Button = ({
+  title,
+  color,
+  disabled = false,
+  loading = false,
+  ...rest
+}: Props) => {
+  const theme = useTheme();
   return (
     <Container
       {...rest}
       color={color}
-      disabled={disabled}
-      style={{ opacity: disabled ? .5 : 1 }}
+      disabled={disabled || loading}
+      style={{ opacity: disabled === true ? 0.5 : 1 }}
     >
-      <Title>{title}</Title>
+      {loading ? (
+        <ActivityIndicator color={theme.colors.shape} size={23} />
+      ) : (
+        <Title>{title} </Title>
+      )}
     </Container>
   );
 };
