@@ -33,6 +33,7 @@ export const SchedulingDetails = () => {
   const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>(
     {} as RentalPeriod
   );
+  const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const navigation = useNavigation();
 
@@ -48,6 +49,7 @@ export const SchedulingDetails = () => {
     .replace(".", ",");
 
   const handleConfirmRental = async () => {
+    setLoading(true);
     const scheduleByCar = await api.get(`/schedules_bycars/${car.id}`);
 
     const unavailable_dates = [
@@ -73,6 +75,7 @@ export const SchedulingDetails = () => {
       .then(() => navigation.navigate("SchedulingComplete"))
       .catch(() => {
         Alert.alert("Não foi possível confirmar o agendamento.");
+        setLoading(false);
       });
   };
 
@@ -164,6 +167,8 @@ export const SchedulingDetails = () => {
           title="ALUGAR AGORA"
           color={theme.colors.success}
           onPress={handleConfirmRental}
+          disabled={loading}
+          loading={loading}
         />
       </S.Footer>
     </S.Container>
