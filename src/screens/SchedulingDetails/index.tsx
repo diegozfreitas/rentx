@@ -1,104 +1,127 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Alert } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { RFValue } from "react-native-responsive-fontsize";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
-import { useNavigation } from "@react-navigation/native";
+import { format } from "date-fns";
 
 import { BackButton } from "../../components/BackButton";
 import { ImageSlider } from "../../components/ImageSlider";
 import { Accessory } from "../../components/Accessory";
-
-import SpeedSvg from "../../assets/speed.svg";
-import AccelerationSvg from "../../assets/acceleration.svg";
-import ForceSvg from "../../assets/force.svg";
-import GasolineSvg from "../../assets/gasoline.svg";
-import ExchangeSvg from "../../assets/exchange.svg";
-import PeopleSvg from "../../assets/people.svg";
-
-import {
-  Container,
-  Header,
-  CarImages,
-  Content,
-  Details,
-  Description,
-  Brand,
-  Name,
-  Rent,
-  Period,
-  Price,
-  Accessories,
-  Footer,
-  RentalPeriod,
-  CalendarIcon,
-  DataInfo,
-  DateTitle,
-  DateValue,
-  RentalPrice,
-  RentalPriceLabel,
-  RentalPriceDetails,
-  RentalPriceQuota,
-  RentalPriceTotal,
-} from "./style";
 import { Button } from "../../components/Button";
-import { RFValue } from "react-native-responsive-fontsize";
+
+import { CarDto } from "../../dtos/carDtos";
+import { api } from "../../services/api";
+
+import { getAccessoryIcon } from "../../utils/getAccessoryIcon";
+import { getPlatformDate } from "../../utils/getPlatformDate";
+
+import * as S from "./style";
+
+interface Params {
+  car: CarDto;
+  dates: string[];
+}
+
+interface RentalPeriod {
+  start: string;
+  end: string;
+}
 
 export const SchedulingDetails = () => {
+  const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>(
+    {} as RentalPeriod
+  );
   const theme = useTheme();
   const navigation = useNavigation();
 
+  const route = useRoute();
+  const { car, dates } = route.params as Params;
+
+  const handleBack = () => {
+    navigation.goBack();
+  };
+
+  const rentTotal = Number(dates.length * car.rent.price)
+    .toFixed(2)
+    .replace(".", ",");
+
+  const handleConfirmRental = async () => {
+    const scheduleByCar = await api.get(`/schedules_bycars/${car.id}`);
+
+    const unavailable_dates = [
+      ...scheduleByCar.data.unavailable_dates,
+      ...dates,
+    ];
+
+    api
+      .put(`/schedules_bycars/${car.id}`, {
+        id: car.id,
+        unavailable_dates,
+      })
+      .then(() => navigation.navigate("SchedulingComplete"))
+      .catch(() => {
+        Alert.alert("Não foi possível confirmar o agendamento.");
+      });
+  };
+
+  useEffect(() => {
+    setRentalPeriod({
+      start: format(getPlatformDate(new Date(dates[0])), "dd/MM/yyyy"),
+      end: format(
+        getPlatformDate(new Date(dates[dates.length - 1])),
+        "dd/MM/yyyy"
+      ),
+    });
+  }, []);
+
   return (
-    <Container>
-      <Header>
-        <BackButton
-          onPress={() => {
-            console.log("oi");
-          }}
-        />
-      </Header>
+    <S.Container>
+      <S.Header>
+        <BackButton onPress={handleBack} />
+      </S.Header>
 
-      <CarImages>
-        <ImageSlider
-          imagesUrl={[
-            "https://image.webmotors.com.br/_fotos/AnuncioUsados/gigante/2022/202203/20220302/AUDI-A5-1.8-TFSI-SPORTBACK-AMBIENTE-16V-GASOLINA-4P-MULTITRONIC-wmimagem15222229826.jpg",
-          ]}
-        />
-      </CarImages>
+      <S.CarImages>
+        <ImageSlider imagesUrl={car.photos} />
+      </S.CarImages>
 
-      <Content>
-        <Details>
-          <Description>
-            <Brand>Lamborguini</Brand>
-            <Name>Huraran</Name>
-          </Description>
+      <S.Content>
+        <S.Details>
+          <S.Description>
+            <S.Brand>{car.brand}</S.Brand>
+            <S.Name>{car.name}</S.Name>
+          </S.Description>
 
-          <Rent>
-            <Period>Ao Dia</Period>
-            <Price>R$ 580</Price>
-          </Rent>
-        </Details>
+          <S.Rent>
+            <S.Period>{car.rent.period}</S.Period>
+            <S.Price>R$ {car.rent.price}</S.Price>
+          </S.Rent>
+        </S.Details>
 
-        <Accessories>
-          <Accessory name="380km/h" icon={SpeedSvg} />
-          <Accessory name="3.2s" icon={AccelerationSvg} />
-          <Accessory name="800 HP" icon={ForceSvg} />
-          <Accessory name="Gasolina" icon={GasolineSvg} />
-          <Accessory name="Auto" icon={ExchangeSvg} />
-          <Accessory name="2 pessoas" icon={PeopleSvg} />
-        </Accessories>
+        <S.Accessories>
+          {car.accessories.map((accessory) => (
+            <Accessory
+              key={accessory.type}
+              name={accessory.name}
+              icon={getAccessoryIcon(accessory.type)}
+            />
+          ))}
+        </S.Accessories>
 
-        <RentalPeriod>
-          <CalendarIcon>
+        <S.RentalPeriod>
+          <S.CalendarIcon>
             <Feather
               name="calendar"
               color={theme.colors.shape}
               size={RFValue(24)}
             />
-          </CalendarIcon>
+          </S.CalendarIcon>
 
-          <DataInfo>
-            <DateTitle>DE</DateTitle>
-            <DateValue>18/06/2010</DateValue>
-          </DataInfo>
+          <S.DataInfo>
+            <S.DateTitle>DE</S.DateTitle>
+            <S.DateValue>{rentalPeriod.start}</S.DateValue>
+          </S.DataInfo>
 
           <Feather
             name="chevron-left"
@@ -106,29 +129,33 @@ export const SchedulingDetails = () => {
             size={RFValue(10)}
           />
 
-          <DataInfo>
-            <DateTitle>DE</DateTitle>
-            <DateValue>18/06/2010</DateValue>
-          </DataInfo>
-        </RentalPeriod>
+          <S.DataInfo>
+            <S.DateTitle>ATE</S.DateTitle>
+            <S.DateValue>{rentalPeriod.end}</S.DateValue>
+          </S.DataInfo>
+        </S.RentalPeriod>
 
-        <RentalPrice>
-          <RentalPriceLabel>TOTAL</RentalPriceLabel>
+        <S.RentalPrice>
+          <S.RentalPriceLabel>TOTAL</S.RentalPriceLabel>
 
-          <RentalPriceDetails>
-            <RentalPriceQuota>R$ 580 x3 diárias</RentalPriceQuota>
-            <RentalPriceTotal>R$ 2.900</RentalPriceTotal>
-          </RentalPriceDetails>
-        </RentalPrice>
-      </Content>
+          <S.RentalPriceDetails>
+            <S.RentalPriceQuota>
+              {`R$ ${car.rent.price.toFixed(2).replace(".", ",")} x ${
+                dates.length
+              } ${dates.length === 1 ? "diária" : "diárias"}`}
+            </S.RentalPriceQuota>
+            <S.RentalPriceTotal>R$ {rentTotal}</S.RentalPriceTotal>
+          </S.RentalPriceDetails>
+        </S.RentalPrice>
+      </S.Content>
 
-      <Footer>
+      <S.Footer>
         <Button
           title="ALUGAR AGORA"
           color={theme.colors.success}
-          onPress={() => navigation.navigate("SchedulingComplete")}
+          onPress={handleConfirmRental}
         />
-      </Footer>
-    </Container>
+      </S.Footer>
+    </S.Container>
   );
 };
